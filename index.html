@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRA - Ovozli Yordamchi</title>
+    <title>AIRA - AI Yordamchi</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #0b0f19;
+            background-color: #050505;
             color: #ffffff;
             height: 100vh;
             display: flex;
@@ -28,164 +28,136 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
+            gap: 30px;
             max-width: 400px;
             padding: 20px;
         }
 
-        /* Yoqimli maxluqcha (Avatar) dizayni */
-        .creature-container {
+        /* Meta AI uslubidagi futuristik sfera avatari */
+        .ai-avatar-wrapper {
             position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ai-sphere {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #888888, #111111);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.15),
+                        inset 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: breathe 4s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Ichki jonli yadro (Core) */
+        .ai-core {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 25px #ffffff, 0 0 50px #38bdf8;
+            animation: pulse-core 2s ease-in-out infinite alternate;
+        }
+
+        /* Atrofdagi neon halqalar */
+        .orbit-ring {
+            position: absolute;
             width: 180px;
             height: 180px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
         }
 
-        .creature {
-            width: 130px;
-            height: 130px;
-            background: #ffffff;
-            border-radius: 50% 50% 45% 45%;
-            position: relative;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: float 3s ease-in-out infinite;
-            transition: all 0.4s ease;
-        }
-
-        /* Antennasi */
-        .creature::before {
+        .orbit-ring::after {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -4px;
             left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 20px;
-            background: #ffffff;
-        }
-
-        .creature::after {
-            content: '';
-            position: absolute;
-            top: -28px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             background: #38bdf8;
             border-radius: 50%;
             box-shadow: 0 0 10px #38bdf8;
-            animation: glow 1.5s infinite alternate;
         }
 
-        /* Yuz qismi (Ko'zlar va Og'iz) */
-        .face {
-            width: 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
+        /* Tinglash rejimidagi (Aktiv) holat */
+        .listening .ai-sphere {
+            background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8, #0284c7);
+            box-shadow: 0 0 80px rgba(56, 189, 248, 0.6),
+                        inset 0 0 40px rgba(255, 255, 255, 0.8);
+            animation: listen-pulse 1s ease-in-out infinite alternate;
         }
 
-        .eye {
-            width: 16px;
-            height: 22px;
-            background: #0b0f19;
-            border-radius: 50%;
-            animation: blink 4s infinite;
-        }
-
-        .mouth {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 7px;
-            border: 3px solid #0b0f19;
-            border-top: none;
-            border-radius: 0 0 15px 15px;
-        }
-
-        /* Tinglash rejimidagi o'zgarishlar */
-        .listening .creature {
-            background: #38bdf8;
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
-            transform: scale(1.1);
-        }
-
-        .listening .creature::after {
+        .listening .ai-core {
             background: #ffffff;
-            box-shadow: 0 0 15px #ffffff;
+            box-shadow: 0 0 40px #ffffff, 0 0 80px #ec4899;
+            transform: scale(1.2);
         }
 
-        .listening .eye {
-            background: #ffffff;
-            height: 18px; /* Xursand ko'zcha */
-            border-radius: 10px 10px 0 0;
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
-        .listening .mouth {
-            width: 20px;
-            height: 10px;
-            border: 3px solid #ffffff;
-            border-top: none;
-            border-radius: 0 0 20px 20px;
+        @keyframes pulse-core {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        @keyframes listen-pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.12); }
         }
 
-        @keyframes blink {
-            0%, 96%, 100% { transform: scaleY(1); }
-            98% { transform: scaleY(0.1); }
-        }
-
-        @keyframes glow {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         h1 {
             font-size: 24px;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             color: #ffffff;
+            font-weight: 600;
         }
 
         #status {
             font-size: 14px;
-            color: #94a3b8;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px 18px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            min-height: 50px;
+            color: #a1a1aa;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             width: 100%;
+            min-height: 48px;
         }
 
         button {
-            padding: 12px 30px;
+            padding: 14px 32px;
             border: none;
             border-radius: 30px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             background: #ffffff;
-            color: #0b0f19;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+            color: #050505;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
         }
 
         button:hover {
             background: #38bdf8;
             color: #ffffff;
+            box-shadow: 0 6px 25px rgba(56, 189, 248, 0.4);
             transform: translateY(-2px);
         }
     </style>
@@ -195,14 +167,11 @@
     <div class="container" id="aira-container">
         <h1>AIRA AI</h1>
         
-        <!-- Maxluqcha avatari -->
-        <div class="creature-container">
-            <div class="creature">
-                <div class="face">
-                    <div class="eye"></div>
-                    <div class="eye"></div>
-                    <div class="mouth"></div>
-                </div>
+        <!-- Meta AI uslubidagi futuristik sfera avatari -->
+        <div class="ai-avatar-wrapper">
+            <div class="orbit-ring"></div>
+            <div class="ai-sphere">
+                <div class="ai-core"></div>
             </div>
         </div>
 
@@ -233,8 +202,8 @@
                         recognition.start();
                         isListening = true;
                         startBtn.innerText = "O'chirish";
-                        statusText.innerText = "Quloq solyapman, 'Aira' deng...";
-                        speak("Tinglayapman.");
+                        statusText.innerText = "Tinglayapman, 'Aira' deb murojaat qiling...";
+                        speak("Aira faollashdi.");
                     } else {
                         recognition.stop();
                         isListening = false;
@@ -257,7 +226,7 @@
 
                 if (transcript.includes('aira')) {
                     container.classList.add('listening');
-                    speak("Buyruq bajarilmoqda.");
+                    speak("Bajarilmoqda.");
 
                     if (transcript.includes('youtube')) {
                         statusText.innerText = "YouTube ochilmoqda...";
