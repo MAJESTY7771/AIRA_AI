@@ -33,7 +33,6 @@
             padding: 20px;
         }
 
-        /* Futuristik Meta AI uslubidagi sfera */
         .ai-avatar-wrapper {
             position: relative;
             width: 200px;
@@ -87,7 +86,6 @@
             box-shadow: 0 0 10px #38bdf8;
         }
 
-        /* Tinglash holati */
         .listening .ai-sphere {
             background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8, #0284c7);
             box-shadow: 0 0 80px rgba(56, 189, 248, 0.6),
@@ -172,7 +170,7 @@
             </div>
         </div>
 
-        <p id="status">Tugmani bosing va o'zbek yoki ingliz tilida gapiring...</p>
+        <p id="status">Tugmani bosing va gapiring...</p>
         <button id="start-btn">AIRA-ni Yoqish</button>
     </div>
 
@@ -187,12 +185,12 @@
             statusText.innerText = "Xatolik: Brauzeringiz ovozni tanishni qo'llab-quvvatlamaydi.";
         } else {
             const recognition = new SpeechRecognition();
-            // Tilni brauzer universal rejimida qoldiramiz yoki o'zbek tiliga moslaymiz
             recognition.lang = 'uz-UZ'; 
             recognition.continuous = true;
             recognition.interimResults = true;
 
             let isListening = false;
+            let isSpeaking = false; // O'zining ovozi paytida tinglamaslik uchun bayroqchа
 
             startBtn.addEventListener('click', () => {
                 try {
@@ -200,7 +198,7 @@
                         recognition.start();
                         isListening = true;
                         startBtn.innerText = "O'chirish";
-                        statusText.innerText = "Listening... 'Aira' deng yoki buyruq bering.";
+                        statusText.innerText = "Listening... Buyruq bering.";
                         speak("Aira is online. How can I help you?");
                     } else {
                         recognition.stop();
@@ -214,6 +212,9 @@
             });
 
             recognition.onresult = (event) => {
+                // Agar AIRA o'zi gapirayotgan bo'lsa, mikrofon o'z ovozini tutib qolishini oldini olamiz
+                if (isSpeaking) return;
+
                 let transcript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     transcript += event.results[i][0].transcript;
@@ -222,13 +223,18 @@
                 transcript = transcript.trim().toLowerCase();
                 statusText.innerText = `Eshitildi: "${transcript}"`;
 
-                // Xoh o'zbekcha, xoh inglizcha "Aira" so'zi bilan yoki to'g'ridan-to'g'ri buyruq berganda ishlaydi
+                // Buyruqlarni aniq tartibda tekshiramiz
                 if (transcript.includes('aira') || transcript.includes('open') || transcript.includes('kir') || transcript.includes('qidir') || transcript.includes('search')) {
                     container.classList.add('listening');
-                    speak("Bajarilmoqda.");
 
+                    // --- TELEGRAM ---
+                    if (transcript.includes('telegram') || transcript.includes('телеграм')) {
+                        statusText.innerText = "Telegram ochilmoqda...";
+                        speak("Opening Telegram.");
+                        setTimeout(() => window.open('https://web.telegram.org', '_blank'), 1000);
+                    } 
                     // --- INSTAGRAM ---
-                    if (transcript.includes('instagram')) {
+                    else if (transcript.includes('instagram')) {
                         statusText.innerText = "Instagram ochilmoqda...";
                         speak("Opening Instagram.");
                         setTimeout(() => window.open('https://www.instagram.com', '_blank'), 1000);
@@ -238,7 +244,7 @@
                         if (transcript.includes('qidir') || transcript.includes('search')) {
                             let query = transcript.replace('aira', '').replace('youtube', '').replace('qidir', '').replace('search', '').trim();
                             statusText.innerText = `YouTube'da qidirilmoqda: ${query}`;
-                            speak(`Searching on YouTube for ${query}`);
+                            speak(`Searching YouTube for ${query}`);
                             setTimeout(() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank'), 1000);
                         } else {
                             statusText.innerText = "YouTube ochilmoqda...";
@@ -246,13 +252,7 @@
                             setTimeout(() => window.open('https://www.youtube.com', '_blank'), 1000);
                         }
                     } 
-                    // --- TELEGRAM ---
-                    else if (transcript.includes('telegram')) {
-                        statusText.innerText = "Telegram ochilmoqda...";
-                        speak("Opening Telegram.");
-                        setTimeout(() => window.open('https://web.telegram.org', '_blank'), 1000);
-                    } 
-                    // --- GOOGLE ASSISTANT / QIDIRUV (O'zbekcha va Inglizcha) ---
+                    // --- GOOGLE QIDIRUV (Agar yuqoridagilar bo'lmasa) ---
                     else if (transcript.includes('google') || transcript.includes('qidir') || transcript.includes('search')) {
                         let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').replace('search', '').trim();
                         statusText.innerText = `Google'da qidirilmoqda: ${query}`;
@@ -271,17 +271,23 @@
             };
 
             recognition.onend = () => {
-                if (isListening) {
+                if (isListening && !isSpeaking) {
                     try { recognition.start(); } catch (e) {}
                 }
             };
-        }
 
-        function speak(text) {
-            const speech = new SpeechSynthesisUtterance(text);
-            // Inglizcha yoki universal matnlar uchun tilni aniqlash
-            speech.lang = /[a-zA-Z]/.test(text) ? 'en-US' : 'uz-UZ';
-            window.speechSynthesis.speak(speech);
+            // Ovozli javob berish funksiyasi (o'z ovoziga chalg'ishni to'sish bilan)
+            window.speak = function(text) {
+                isSpeaking = true; // Gapirayotganda tinglashni to'xtatib turish
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = /[a-zA-Z]/.test(text) ? 'en-US' : 'uz-UZ';
+                
+                speech.onend = function() {
+                    isSpeaking = false; // Gapirib bo'lgach qayta tinglashni yoqish
+                };
+
+                window.speechSynthesis.speak(speech);
+            }
         }
     </script>
 </body>
