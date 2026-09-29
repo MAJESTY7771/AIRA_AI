@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #090d16;
+            background-color: #0b0f19;
             color: #ffffff;
             height: 100vh;
             display: flex;
@@ -33,8 +33,8 @@
             padding: 20px;
         }
 
-        /* Avatar va ovoz to'lqini dizayni */
-        .avatar-container {
+        /* Yoqimli maxluqcha (Avatar) dizayni */
+        .creature-container {
             position: relative;
             width: 180px;
             height: 180px;
@@ -43,75 +43,131 @@
             align-items: center;
         }
 
-        .avatar {
+        .creature {
             width: 130px;
             height: 130px;
-            background: linear-gradient(135deg, #4f46e5, #ec4899);
-            border-radius: 50%;
+            background: #ffffff;
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 0 30px rgba(79, 70, 229, 0.6);
-            z-index: 2;
+            animation: float 3s ease-in-out infinite;
             transition: all 0.4s ease;
         }
 
-        .avatar span {
-            font-size: 11px;
-            font-weight: 400;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        .pulse-ring {
+        /* Antennasi */
+        .creature::before {
+            content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 20px;
+            background: #ffffff;
+        }
+
+        .creature::after {
+            content: '';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: #38bdf8;
             border-radius: 50%;
-            border: 2px solid #6366f1;
-            animation: pulse 2s infinite;
-            opacity: 0;
+            box-shadow: 0 0 10px #38bdf8;
+            animation: glow 1.5s infinite alternate;
         }
 
-        /* Eshitish rejimidagi holat (Siri uslubida) */
-        .listening .pulse-ring {
-            animation: pulse-active 1s infinite;
-            border-color: #ec4899;
+        /* Yuz qismi (Ko'zlar va Og'iz) */
+        .face {
+            width: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
         }
 
-        .listening .avatar {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            transform: scale(1.08);
-            box-shadow: 0 0 45px rgba(236, 72, 153, 0.8);
+        .eye {
+            width: 16px;
+            height: 22px;
+            background: #0b0f19;
+            border-radius: 50%;
+            animation: blink 4s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.6); opacity: 0; }
+        .mouth {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 7px;
+            border: 3px solid #0b0f19;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
         }
 
-        @keyframes pulse-active {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
+        /* Tinglash rejimidagi o'zgarishlar */
+        .listening .creature {
+            background: #38bdf8;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+            transform: scale(1.1);
+        }
+
+        .listening .creature::after {
+            background: #ffffff;
+            box-shadow: 0 0 15px #ffffff;
+        }
+
+        .listening .eye {
+            background: #ffffff;
+            height: 18px; /* Xursand ko'zcha */
+            border-radius: 10px 10px 0 0;
+        }
+
+        .listening .mouth {
+            width: 20px;
+            height: 10px;
+            border: 3px solid #ffffff;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+
+        @keyframes glow {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             letter-spacing: 3px;
-            color: #a5b4fc;
+            color: #ffffff;
         }
 
         #status {
-            font-size: 16px;
-            color: #cbd5e1;
-            min-height: 28px;
+            font-size: 14px;
+            color: #94a3b8;
             background: rgba(255, 255, 255, 0.05);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 50px;
+            width: 100%;
         }
 
         button {
@@ -122,14 +178,15 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
-            color: white;
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.5);
+            background: #ffffff;
+            color: #0b0f19;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
         }
 
         button:hover {
+            background: #38bdf8;
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(79, 70, 229, 0.7);
         }
     </style>
 </head>
@@ -137,14 +194,19 @@
 
     <div class="container" id="aira-container">
         <h1>AIRA AI</h1>
-        <div class="avatar-container">
-            <div class="pulse-ring"></div>
-            <div class="avatar">
-                AIRA
-                <span>Online</span>
+        
+        <!-- Maxluqcha avatari -->
+        <div class="creature-container">
+            <div class="creature">
+                <div class="face">
+                    <div class="eye"></div>
+                    <div class="eye"></div>
+                    <div class="mouth"></div>
+                </div>
             </div>
         </div>
-        <p id="status">Tugmani bosing va "Aira" deb chaqiring...</p>
+
+        <p id="status">Tugmani bosing va "Aira" deb gapiring...</p>
         <button id="start-btn">AIRA-ni Yoqish</button>
     </div>
 
@@ -156,114 +218,85 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (!SpeechRecognition) {
-            alert("Sizning brauzeringiz ovozli buyruqlarni qo'llab-quvvatlamaydi. Chrome brauzeridan foydalaning.");
+            statusText.innerText = "Xatolik: Brauzeringiz ovozni tanishni qo'llab-quvvatlamaydi.";
         } else {
             const recognition = new SpeechRecognition();
-            recognition.lang = 'uz-UZ'; // O'zbek tili
+            recognition.lang = 'uz-UZ'; 
             recognition.continuous = true;
-            recognition.interimResults = false;
+            recognition.interimResults = true;
 
-            let isAiraActive = false;
+            let isListening = false;
 
             startBtn.addEventListener('click', () => {
                 try {
-                    recognition.start();
-                    startBtn.style.display = 'none';
-                    statusText.innerText = "Quloq solyapman: 'Aira' deng...";
-                    speak("Aira faollashdi. Marhamat, buyruq bering.");
+                    if (!isListening) {
+                        recognition.start();
+                        isListening = true;
+                        startBtn.innerText = "O'chirish";
+                        statusText.innerText = "Quloq solyapman, 'Aira' deng...";
+                        speak("Tinglayapman.");
+                    } else {
+                        recognition.stop();
+                        isListening = false;
+                        startBtn.innerText = "AIRA-ni Yoqish";
+                        statusText.innerText = "To'xtatildi.";
+                    }
                 } catch (e) {
-                    console.log(e);
+                    statusText.innerText = "Xatolik: " + e.message;
                 }
             });
 
             recognition.onresult = (event) => {
-                const current = event.resultIndex;
-                const transcript = event.results[current][0].transcript.trim().toLowerCase();
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
                 
-                console.log("Eshitildi: " + transcript);
+                transcript = transcript.trim().toLowerCase();
+                statusText.innerText = `Eshitildi: "${transcript}"`;
 
-                // 1. "Aira" so'zi bilan chaqirish yoki faol holatda bo'lish
-                if (transcript.includes('aira') || isAiraActive) {
-                    if (!isAiraActive) {
-                        isAiraActive = true;
-                        container.classList.add('listening');
-                        statusText.innerText = "Eshitayapman: " + transcript;
-                        speak("Xeshitayapman, qanday yordam bera olaman?");
-                        return;
-                    }
+                if (transcript.includes('aira')) {
+                    container.classList.add('listening');
+                    speak("Buyruq bajarilmoqda.");
 
-                    // 2. Ilovalar va xizmatlarni boshqarish buyruqlari
-                    
-                    // --- YOUTUBE ---
-                    if (transcript.includes('youtube') || transcript.includes('youtubega')) {
-                        if (transcript.includes('qidir') || transcript.includes('izla')) {
-                            let query = transcript.replace('aira', '').replace('youtube', '').replace('youtubega', '').replace('qidir', '').replace('izla', '').trim();
-                            statusText.innerText = `YouTube'da qidirilmoqda: ${query}`;
-                            speak(`YouTube'da ${query} bo'yicha qidiryapman.`);
-                            setTimeout(() => {
-                                window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
-                            }, 1000);
-                        } else {
-                            statusText.innerText = "YouTube ochilmoqda...";
-                            speak("YouTube ochilmoqda.");
-                            setTimeout(() => {
-                                window.open('https://www.youtube.com', '_blank');
-                            }, 1000);
-                        }
+                    if (transcript.includes('youtube')) {
+                        statusText.innerText = "YouTube ochilmoqda...";
+                        setTimeout(() => window.open('https://www.youtube.com', '_blank'), 1000);
                     } 
-                    // --- INSTAGRAM ---
-                    else if (transcript.includes('instagram') || transcript.includes('instagramga')) {
+                    else if (transcript.includes('instagram')) {
                         statusText.innerText = "Instagram ochilmoqda...";
-                        speak("Instagram ochilmoqda.");
-                        setTimeout(() => {
-                            window.open('https://www.instagram.com', '_blank');
-                        }, 1000);
+                        setTimeout(() => window.open('https://www.instagram.com', '_blank'), 1000);
                     } 
-                    // --- TELEGRAM ---
-                    else if (transcript.includes('telegram') || transcript.includes('telegramga')) {
-                        statusText.innerText = "Telegram Web ochilmoqda...";
-                        speak("Telegram ochilmoqda.");
-                        setTimeout(() => {
-                            window.open('https://web.telegram.org', '_blank');
-                        }, 1000);
+                    else if (transcript.includes('telegram')) {
+                        statusText.innerText = "Telegram ochilmoqda...";
+                        setTimeout(() => window.open('https://web.telegram.org', '_blank'), 1000);
                     } 
-                    // --- GOOGLE QIDiruv ---
-                    else if (transcript.includes('google') || transcript.includes('qidir') || transcript.includes('izla')) {
-                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').replace('izla', '').trim();
-                        statusText.innerText = `Google'da qidirilmoqda: ${query}`;
-                        speak(`${query} bo'yicha ma'lumot qidiryapman.`);
-                        setTimeout(() => {
-                            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-                        }, 1000);
-                    } 
-                    // Noma'lum buyruq
-                    else {
-                        statusText.innerText = `Tushunmadim: "${transcript}"`;
-                        speak("Kechirasiz, bu buyruqni tushunmadim. Boshqa vazifa ayting.");
+                    else if (transcript.includes('google') || transcript.includes('qidir')) {
+                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').trim();
+                        statusText.innerText = `Qidirilmoqda: ${query}`;
+                        setTimeout(() => window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank'), 1000);
                     }
 
-                    // Vazifa bajarilgach, kutish holatiga qaytish
-                    isAiraActive = false;
-                    container.classList.remove('listening');
+                    setTimeout(() => {
+                        container.classList.remove('listening');
+                    }, 3000);
                 }
             };
 
             recognition.onerror = (event) => {
-                console.log("Xatolik: ", event.error);
+                statusText.innerText = "Mikrofon xatosi: " + event.error;
             };
 
             recognition.onend = () => {
-                try {
-                    recognition.start(); // To'xtab qolmasligi uchun avtomatik qayta yoqish
-                } catch (e) {}
+                if (isListening) {
+                    try { recognition.start(); } catch (e) {}
+                }
             };
         }
 
-        // AIRA ovozli javob berish funksiyasi
         function speak(text) {
             const speech = new SpeechSynthesisUtterance(text);
             speech.lang = 'uz-UZ';
-            speech.rate = 1.0;
             window.speechSynthesis.speak(speech);
         }
     </script>
