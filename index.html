@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRA - AI Yordamchi</title>
+    <title>AIRA - AI Assistant</title>
     <style>
         * {
             margin: 0;
@@ -33,7 +33,7 @@
             padding: 20px;
         }
 
-        /* Meta AI uslubidagi futuristik sfera avatari */
+        /* Futuristik Meta AI uslubidagi sfera */
         .ai-avatar-wrapper {
             position: relative;
             width: 200px;
@@ -57,7 +57,6 @@
             align-items: center;
         }
 
-        /* Ichki jonli yadro (Core) */
         .ai-core {
             width: 60px;
             height: 60px;
@@ -67,7 +66,6 @@
             animation: pulse-core 2s ease-in-out infinite alternate;
         }
 
-        /* Atrofdagi neon halqalar */
         .orbit-ring {
             position: absolute;
             width: 180px;
@@ -89,7 +87,7 @@
             box-shadow: 0 0 10px #38bdf8;
         }
 
-        /* Tinglash rejimidagi (Aktiv) holat */
+        /* Tinglash holati */
         .listening .ai-sphere {
             background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8, #0284c7);
             box-shadow: 0 0 80px rgba(56, 189, 248, 0.6),
@@ -167,7 +165,6 @@
     <div class="container" id="aira-container">
         <h1>AIRA AI</h1>
         
-        <!-- Meta AI uslubidagi futuristik sfera avatari -->
         <div class="ai-avatar-wrapper">
             <div class="orbit-ring"></div>
             <div class="ai-sphere">
@@ -175,7 +172,7 @@
             </div>
         </div>
 
-        <p id="status">Tugmani bosing va "Aira" deb gapiring...</p>
+        <p id="status">Tugmani bosing va o'zbek yoki ingliz tilida gapiring...</p>
         <button id="start-btn">AIRA-ni Yoqish</button>
     </div>
 
@@ -190,6 +187,7 @@
             statusText.innerText = "Xatolik: Brauzeringiz ovozni tanishni qo'llab-quvvatlamaydi.";
         } else {
             const recognition = new SpeechRecognition();
+            // Tilni brauzer universal rejimida qoldiramiz yoki o'zbek tiliga moslaymiz
             recognition.lang = 'uz-UZ'; 
             recognition.continuous = true;
             recognition.interimResults = true;
@@ -202,8 +200,8 @@
                         recognition.start();
                         isListening = true;
                         startBtn.innerText = "O'chirish";
-                        statusText.innerText = "Tinglayapman, 'Aira' deb murojaat qiling...";
-                        speak("Aira faollashdi.");
+                        statusText.innerText = "Listening... 'Aira' deng yoki buyruq bering.";
+                        speak("Aira is online. How can I help you?");
                     } else {
                         recognition.stop();
                         isListening = false;
@@ -224,25 +222,41 @@
                 transcript = transcript.trim().toLowerCase();
                 statusText.innerText = `Eshitildi: "${transcript}"`;
 
-                if (transcript.includes('aira')) {
+                // Xoh o'zbekcha, xoh inglizcha "Aira" so'zi bilan yoki to'g'ridan-to'g'ri buyruq berganda ishlaydi
+                if (transcript.includes('aira') || transcript.includes('open') || transcript.includes('kir') || transcript.includes('qidir') || transcript.includes('search')) {
                     container.classList.add('listening');
                     speak("Bajarilmoqda.");
 
-                    if (transcript.includes('youtube')) {
-                        statusText.innerText = "YouTube ochilmoqda...";
-                        setTimeout(() => window.open('https://www.youtube.com', '_blank'), 1000);
-                    } 
-                    else if (transcript.includes('instagram')) {
+                    // --- INSTAGRAM ---
+                    if (transcript.includes('instagram')) {
                         statusText.innerText = "Instagram ochilmoqda...";
+                        speak("Opening Instagram.");
                         setTimeout(() => window.open('https://www.instagram.com', '_blank'), 1000);
                     } 
+                    // --- YOUTUBE ---
+                    else if (transcript.includes('youtube')) {
+                        if (transcript.includes('qidir') || transcript.includes('search')) {
+                            let query = transcript.replace('aira', '').replace('youtube', '').replace('qidir', '').replace('search', '').trim();
+                            statusText.innerText = `YouTube'da qidirilmoqda: ${query}`;
+                            speak(`Searching on YouTube for ${query}`);
+                            setTimeout(() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank'), 1000);
+                        } else {
+                            statusText.innerText = "YouTube ochilmoqda...";
+                            speak("Opening YouTube.");
+                            setTimeout(() => window.open('https://www.youtube.com', '_blank'), 1000);
+                        }
+                    } 
+                    // --- TELEGRAM ---
                     else if (transcript.includes('telegram')) {
                         statusText.innerText = "Telegram ochilmoqda...";
+                        speak("Opening Telegram.");
                         setTimeout(() => window.open('https://web.telegram.org', '_blank'), 1000);
                     } 
-                    else if (transcript.includes('google') || transcript.includes('qidir')) {
-                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').trim();
-                        statusText.innerText = `Qidirilmoqda: ${query}`;
+                    // --- GOOGLE ASSISTANT / QIDIRUV (O'zbekcha va Inglizcha) ---
+                    else if (transcript.includes('google') || transcript.includes('qidir') || transcript.includes('search')) {
+                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').replace('search', '').trim();
+                        statusText.innerText = `Google'da qidirilmoqda: ${query}`;
+                        speak(`Searching Google for ${query}`);
                         setTimeout(() => window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank'), 1000);
                     }
 
@@ -265,7 +279,8 @@
 
         function speak(text) {
             const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'uz-UZ';
+            // Inglizcha yoki universal matnlar uchun tilni aniqlash
+            speech.lang = /[a-zA-Z]/.test(text) ? 'en-US' : 'uz-UZ';
             window.speechSynthesis.speak(speech);
         }
     </script>
