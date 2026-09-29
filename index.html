@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRA - Ovozli Yordamchi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #090d16;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        /* Avatar va ovoz to'lqini dizayni */
+        .avatar-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.6);
+            z-index: 2;
+            transition: all 0.4s ease;
+        }
+
+        .avatar span {
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #6366f1;
+            animation: pulse 2s infinite;
+            opacity: 0;
+        }
+
+        /* Eshitish rejimidagi holat (Siri uslubida) */
+        .listening .pulse-ring {
+            animation: pulse-active 1s infinite;
+            border-color: #ec4899;
+        }
+
+        .listening .avatar {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            transform: scale(1.08);
+            box-shadow: 0 0 45px rgba(236, 72, 153, 0.8);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        @keyframes pulse-active {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        h1 {
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: #a5b4fc;
+        }
+
+        #status {
+            font-size: 16px;
+            color: #cbd5e1;
+            min-height: 28px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(79, 70, 229, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="aira-container">
+        <h1>AIRA AI</h1>
+        <div class="avatar-container">
+            <div class="pulse-ring"></div>
+            <div class="avatar">
+                AIRA
+                <span>Online</span>
+            </div>
+        </div>
+        <p id="status">Tugmani bosing va "Aira" deb chaqiring...</p>
+        <button id="start-btn">AIRA-ni Yoqish</button>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const statusText = document.getElementById('status');
+        const container = document.getElementById('aira-container');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            alert("Sizning brauzeringiz ovozli buyruqlarni qo'llab-quvvatlamaydi. Chrome brauzeridan foydalaning.");
+        } else {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'uz-UZ'; // O'zbek tili
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            let isAiraActive = false;
+
+            startBtn.addEventListener('click', () => {
+                try {
+                    recognition.start();
+                    startBtn.style.display = 'none';
+                    statusText.innerText = "Quloq solyapman: 'Aira' deng...";
+                    speak("Aira faollashdi. Marhamat, buyruq bering.");
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const current = event.resultIndex;
+                const transcript = event.results[current][0].transcript.trim().toLowerCase();
+                
+                console.log("Eshitildi: " + transcript);
+
+                // 1. "Aira" so'zi bilan chaqirish yoki faol holatda bo'lish
+                if (transcript.includes('aira') || isAiraActive) {
+                    if (!isAiraActive) {
+                        isAiraActive = true;
+                        container.classList.add('listening');
+                        statusText.innerText = "Eshitayapman: " + transcript;
+                        speak("Xeshitayapman, qanday yordam bera olaman?");
+                        return;
+                    }
+
+                    // 2. Ilovalar va xizmatlarni boshqarish buyruqlari
+                    
+                    // --- YOUTUBE ---
+                    if (transcript.includes('youtube') || transcript.includes('youtubega')) {
+                        if (transcript.includes('qidir') || transcript.includes('izla')) {
+                            let query = transcript.replace('aira', '').replace('youtube', '').replace('youtubega', '').replace('qidir', '').replace('izla', '').trim();
+                            statusText.innerText = `YouTube'da qidirilmoqda: ${query}`;
+                            speak(`YouTube'da ${query} bo'yicha qidiryapman.`);
+                            setTimeout(() => {
+                                window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
+                            }, 1000);
+                        } else {
+                            statusText.innerText = "YouTube ochilmoqda...";
+                            speak("YouTube ochilmoqda.");
+                            setTimeout(() => {
+                                window.open('https://www.youtube.com', '_blank');
+                            }, 1000);
+                        }
+                    } 
+                    // --- INSTAGRAM ---
+                    else if (transcript.includes('instagram') || transcript.includes('instagramga')) {
+                        statusText.innerText = "Instagram ochilmoqda...";
+                        speak("Instagram ochilmoqda.");
+                        setTimeout(() => {
+                            window.open('https://www.instagram.com', '_blank');
+                        }, 1000);
+                    } 
+                    // --- TELEGRAM ---
+                    else if (transcript.includes('telegram') || transcript.includes('telegramga')) {
+                        statusText.innerText = "Telegram Web ochilmoqda...";
+                        speak("Telegram ochilmoqda.");
+                        setTimeout(() => {
+                            window.open('https://web.telegram.org', '_blank');
+                        }, 1000);
+                    } 
+                    // --- GOOGLE QIDiruv ---
+                    else if (transcript.includes('google') || transcript.includes('qidir') || transcript.includes('izla')) {
+                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').replace('izla', '').trim();
+                        statusText.innerText = `Google'da qidirilmoqda: ${query}`;
+                        speak(`${query} bo'yicha ma'lumot qidiryapman.`);
+                        setTimeout(() => {
+                            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                        }, 1000);
+                    } 
+                    // Noma'lum buyruq
+                    else {
+                        statusText.innerText = `Tushunmadim: "${transcript}"`;
+                        speak("Kechirasiz, bu buyruqni tushunmadim. Boshqa vazifa ayting.");
+                    }
+
+                    // Vazifa bajarilgach, kutish holatiga qaytish
+                    isAiraActive = false;
+                    container.classList.remove('listening');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.log("Xatolik: ", event.error);
+            };
+
+            recognition.onend = () => {
+                try {
+                    recognition.start(); // To'xtab qolmasligi uchun avtomatik qayta yoqish
+                } catch (e) {}
+            };
+        }
+
+        // AIRA ovozli javob berish funksiyasi
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'uz-UZ';
+            speech.rate = 1.0;
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+</body>
+</html>
