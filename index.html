@@ -28,28 +28,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
-            max-width: 400px;
+            gap: 25px;
+            max-width: 420px;
             padding: 20px;
         }
 
         .ai-avatar-wrapper {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .ai-sphere {
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
             background: radial-gradient(circle at 30% 30%, #ffffff, #888888, #111111);
             border-radius: 50%;
             position: relative;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.15),
-                        inset 0 0 30px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.15),
+                        inset 0 0 25px rgba(255, 255, 255, 0.5);
             animation: breathe 4s ease-in-out infinite;
             display: flex;
             justify-content: center;
@@ -57,18 +57,18 @@
         }
 
         .ai-core {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 25px #ffffff, 0 0 50px #38bdf8;
+            box-shadow: 0 0 20px #ffffff, 0 0 40px #38bdf8;
             animation: pulse-core 2s ease-in-out infinite alternate;
         }
 
         .orbit-ring {
             position: absolute;
-            width: 180px;
-            height: 180px;
+            width: 160px;
+            height: 160px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             animation: rotate 10s linear infinite;
@@ -79,8 +79,8 @@
             position: absolute;
             top: -4px;
             left: 50%;
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: #38bdf8;
             border-radius: 50%;
             box-shadow: 0 0 10px #38bdf8;
@@ -88,14 +88,14 @@
 
         .listening .ai-sphere {
             background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8, #0284c7);
-            box-shadow: 0 0 80px rgba(56, 189, 248, 0.6),
-                        inset 0 0 40px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 70px rgba(56, 189, 248, 0.6),
+                        inset 0 0 35px rgba(255, 255, 255, 0.8);
             animation: listen-pulse 1s ease-in-out infinite alternate;
         }
 
         .listening .ai-core {
             background: #ffffff;
-            box-shadow: 0 0 40px #ffffff, 0 0 80px #ec4899;
+            box-shadow: 0 0 35px #ffffff, 0 0 70px #ec4899;
             transform: scale(1.2);
         }
 
@@ -120,28 +120,30 @@
         }
 
         h1 {
-            font-size: 24px;
-            letter-spacing: 4px;
+            font-size: 22px;
+            letter-spacing: 3px;
             color: #ffffff;
             font-weight: 600;
         }
 
         #status {
-            font-size: 14px;
+            font-size: 13px;
             color: #a1a1aa;
             background: rgba(255, 255, 255, 0.03);
-            padding: 12px 20px;
-            border-radius: 16px;
+            padding: 12px 18px;
+            border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             width: 100%;
-            min-height: 48px;
+            min-height: 50px;
+            max-height: 90px;
+            overflow-y: auto;
         }
 
         button {
-            padding: 14px 32px;
+            padding: 12px 28px;
             border: none;
             border-radius: 30px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -170,7 +172,7 @@
             </div>
         </div>
 
-        <p id="status">Tugmani bosing va gapiring...</p>
+        <p id="status">Tugmani bosing va o'zbek, rus yoki ingliz tilida gapiring...</p>
         <button id="start-btn">AIRA-ni Yoqish</button>
     </div>
 
@@ -179,18 +181,22 @@
         const statusText = document.getElementById('status');
         const container = document.getElementById('aira-container');
 
+        // GEMINI API KALITI (Bu yerga o'z Gemini API kalitingizni yozasiz)
+        const GEMINI_API_KEY = "BU_YERGA_GEMINI_API_KEY_YOZING";
+
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (!SpeechRecognition) {
             statusText.innerText = "Xatolik: Brauzeringiz ovozni tanishni qo'llab-quvvatlamaydi.";
         } else {
             const recognition = new SpeechRecognition();
+            // Universal til rejimi (O'zbek, Rus va Ingliz tillarini bir vaqtda qabul qilish uchun)
             recognition.lang = 'uz-UZ'; 
             recognition.continuous = true;
             recognition.interimResults = true;
 
             let isListening = false;
-            let isSpeaking = false; // O'zining ovozi paytida tinglamaslik uchun bayroqchа
+            let isSpeaking = false;
 
             startBtn.addEventListener('click', () => {
                 try {
@@ -198,8 +204,8 @@
                         recognition.start();
                         isListening = true;
                         startBtn.innerText = "O'chirish";
-                        statusText.innerText = "Listening... Buyruq bering.";
-                        speak("Aira is online. How can I help you?");
+                        statusText.innerText = "Listening... Говорите... Gapiring...";
+                        speak("Aira is online. Я готова. Eshitayapman.");
                     } else {
                         recognition.stop();
                         isListening = false;
@@ -211,8 +217,7 @@
                 }
             });
 
-            recognition.onresult = (event) => {
-                // Agar AIRA o'zi gapirayotgan bo'lsa, mikrofon o'z ovozini tutib qolishini oldini olamiz
+            recognition.onresult = async (event) => {
                 if (isSpeaking) return;
 
                 let transcript = '';
@@ -223,46 +228,76 @@
                 transcript = transcript.trim().toLowerCase();
                 statusText.innerText = `Eshitildi: "${transcript}"`;
 
-                // Buyruqlarni aniq tartibda tekshiramiz
-                if (transcript.includes('aira') || transcript.includes('open') || transcript.includes('kir') || transcript.includes('qidir') || transcript.includes('search')) {
+                // AIRA chaqirig'i yoki to'g'ridan-to'g'ri buyruqlar
+                if (transcript.includes('aira') || transcript.includes('айра') || 
+                    transcript.includes('open') || transcript.includes('kir') || 
+                    transcript.includes('открой') || transcript.includes('qidir') || 
+                    transcript.includes('search') || transcript.includes('найди') ||
+                    transcript.includes('ob-havo') || transcript.includes('погода') || transcript.includes('weather')) {
+                    
                     container.classList.add('listening');
 
-                    // --- TELEGRAM ---
+                    // 1. TELEGRAM
                     if (transcript.includes('telegram') || transcript.includes('телеграм')) {
-                        statusText.innerText = "Telegram ochilmoqda...";
-                        speak("Opening Telegram.");
-                        setTimeout(() => window.open('https://web.telegram.org', '_blank'), 1000);
+                        statusText.innerText = "Telegram ilovasi ochilmoqda...";
+                        speak("Telegram ochilmoqda.");
+                        setTimeout(() => window.location.href = 'tg://', 1000); // Telefon ilovasiga to'g'ridan-to'g'ri o'tish
                     } 
-                    // --- INSTAGRAM ---
-                    else if (transcript.includes('instagram')) {
-                        statusText.innerText = "Instagram ochilmoqda...";
-                        speak("Opening Instagram.");
-                        setTimeout(() => window.open('https://www.instagram.com', '_blank'), 1000);
+                    // 2. INSTAGRAM
+                    else if (transcript.includes('instagram') || transcript.includes('инстаграм')) {
+                        statusText.innerText = "Instagram ilovasi ochilmoqda...";
+                        speak("Instagram ochilmoqda.");
+                        setTimeout(() => window.location.href = 'instagram://', 1000);
                     } 
-                    // --- YOUTUBE ---
-                    else if (transcript.includes('youtube')) {
-                        if (transcript.includes('qidir') || transcript.includes('search')) {
-                            let query = transcript.replace('aira', '').replace('youtube', '').replace('qidir', '').replace('search', '').trim();
-                            statusText.innerText = `YouTube'da qidirilmoqda: ${query}`;
-                            speak(`Searching YouTube for ${query}`);
-                            setTimeout(() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank'), 1000);
-                        } else {
-                            statusText.innerText = "YouTube ochilmoqda...";
-                            speak("Opening YouTube.");
-                            setTimeout(() => window.open('https://www.youtube.com', '_blank'), 1000);
-                        }
-                    } 
-                    // --- GOOGLE QIDIRUV (Agar yuqoridagilar bo'lmasa) ---
-                    else if (transcript.includes('google') || transcript.includes('qidir') || transcript.includes('search')) {
-                        let query = transcript.replace('aira', '').replace('google', '').replace('qidir', '').replace('search', '').trim();
-                        statusText.innerText = `Google'da qidirilmoqda: ${query}`;
-                        speak(`Searching Google for ${query}`);
-                        setTimeout(() => window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank'), 1000);
+                    // 3. GALEREYA (Gallery)
+                    else if (transcript.includes('gallery') || transcript.includes('galareya') || transcript.includes('галерея')) {
+                        statusText.innerText = "Galereya ochilmoqda...";
+                        speak("Galereya ochilmoqda.");
+                        setTimeout(() => {
+                            // Android/iOS galereya sxemasi yoki fotosuratlar ilovasi
+                            window.location.href = 'content://media/internal/images/media';
+                        }, 1000);
+                    }
+                    // 4. GOOGLE ILOVASI VA QIDIRUV (Masalan: "Googlega kirib Youtubeni qidir")
+                    else if (transcript.includes('google') || transcript.includes('гугл')) {
+                        let query = transcript.replace('aira', '').replace('айра', '').replace('google', '').replace('гугл', '').replace('kir', '').replace('открой', '').replace('qidir', '').replace('search', '').replace('найди', '').trim();
+                        
+                        statusText.innerText = `Google ilovasidan qidirilmoqda: ${query}`;
+                        speak(`Google'da ${query} qidirilmoqda.`);
+                        
+                        setTimeout(() => {
+                            // Google ilovasi sxemasi orqali yoki Google qidiruv ilovasiga yo'naltirish
+                            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                        }, 1000);
+                    }
+                    // 5. YOUTUBE
+                    else if (transcript.includes('youtube') || transcript.includes('ютуб')) {
+                        let query = transcript.replace('aira', '').replace('айра', '').replace('youtube', '').replace('ютуб', '').replace('qidir', '').replace('search', '').replace('найди', '').trim();
+                        
+                        statusText.innerText = `YouTube ochilmoqda: ${query}`;
+                        speak("YouTube ochilmoqda.");
+                        
+                        setTimeout(() => {
+                            if (query.length > 2) {
+                                window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
+                            } else {
+                                window.open('https://www.youtube.com', '_blank');
+                            }
+                        }, 1000);
+                    }
+                    // 6. GEMINI ORQALI UMUMIYYAT SAVOLLAR VA OB-HAVO (Masalan: Samarqand ob-havosi)
+                    else {
+                        statusText.innerText = "O'ylayapman (Gemini)...";
+                        
+                        // Gemini AI orqali javob olish
+                        let aiAnswer = await askGemini(transcript);
+                        statusText.innerText = aiAnswer;
+                        speak(aiAnswer);
                     }
 
                     setTimeout(() => {
                         container.classList.remove('listening');
-                    }, 3000);
+                    }, 4000);
                 }
             };
 
@@ -276,14 +311,48 @@
                 }
             };
 
-            // Ovozli javob berish funksiyasi (o'z ovoziga chalg'ishni to'sish bilan)
+            // Google Gemini API ga so'rov yuborish funksiyasi
+            async function askGemini(promptText) {
+                if (GEMINI_API_KEY === "BU_YERGA_GEMINI_API_KEY_YOZING") {
+                    return "Iltimos, kodga Gemini API kalitingizni kiriting.";
+                }
+
+                try {
+                    const response = qöshuv = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `Siz AIRA nomli aqlli ovozli yordamchisiz. Foydalanuvchi hozir Samarqand shahrida. Quyidagi savolga qaysi tilda (o'zbek, rus yoki ingliz) yozilgan bo'lsa, o'sha tilda qisqacha, aniq va ovozli o'qishga qulay qilib javob bering: ${promptText}`
+                                }]
+                            }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    const text = data.candidates[0].content.parts[0].text;
+                    return text.trim();
+                } catch (error) {
+                    return "Kechirasiz, internetga ulanishda xatolik yuz berdi.";
+                }
+            }
+
             window.speak = function(text) {
-                isSpeaking = true; // Gapirayotganda tinglashni to'xtatib turish
+                isSpeaking = true;
                 const speech = new SpeechSynthesisUtterance(text);
-                speech.lang = /[a-zA-Z]/.test(text) ? 'en-US' : 'uz-UZ';
+                
+                // Tilni matnga qarab avtomatik aniqlash (O'zbek, Rus yoki Ingliz)
+                if (/[а-яА-ЯЁё]/.test(text)) {
+                    speech.lang = 'ru-RU';
+                } else if (/[a-zA-Z]/.test(text)) {
+                    speech.lang = 'en-US';
+                } else {
+                    speech.lang = 'uz-UZ';
+                }
                 
                 speech.onend = function() {
-                    isSpeaking = false; // Gapirib bo'lgach qayta tinglashni yoqish
+                    isSpeaking = false;
                 };
 
                 window.speechSynthesis.speak(speech);
